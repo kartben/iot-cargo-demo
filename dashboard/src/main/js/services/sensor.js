@@ -58,7 +58,7 @@ angular.module('app')
             }
             var edcUrl = APP_CONFIG.EDC_REST_ENDPOINT + '/streams/subscribe.json?';
 
-            edcUrl += ('topic=' + topic);
+            edcUrl += ('topic=' + encodeURIComponent(topic));
 
             edcUrl += '&fetch=all';
 
@@ -87,7 +87,7 @@ angular.module('app')
                 var topic = msg.topic;
 
                 var dataObj = {
-                    pkgId: topic,
+                    pkgId: topic.replace(/^(.*?)\/(.*?)\/(.*?)/, '$1/+/$3'),
                     timestamp: timestamp.getTime()
                 };
 
@@ -149,7 +149,7 @@ angular.module('app')
             $http({
                 method: 'GET',
                 url: APP_CONFIG.EDC_REST_ENDPOINT + '/messages/searchByTopic?' +
-                'topic=' + pkgId +
+                'topic=' + encodeURIComponent(pkgId) +
                 '&startDate=' +startTime +
                 '&endDate=' +endTime +
                 '&limit=' + limit,

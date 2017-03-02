@@ -103,6 +103,14 @@ angular.module('app')
 
         };
 
+        function toUnique(a, b, c) { //array,placeholder,placeholder
+            b = a.length;
+            while (c = --b)
+                while (c--) a[b] !== a[c] || a.splice(c, 1);
+            return a // not needed ;)
+        }
+
+
         factory.reset = function () {
 
 
@@ -166,15 +174,21 @@ angular.module('app')
 
                     $http({
                         method: 'GET',
-                        url: APP_CONFIG.EDC_REST_ENDPOINT + '/assets/' + APP_CONFIG.DEMO_ASSET + '/topics',
+                        url: APP_CONFIG.EDC_REST_ENDPOINT + '/topics',
                         headers: {
                             'Authorization': auth
                         }
                     }).then(function successCallback(response) {
+                        var arr = [];
 
                         response.data.topicInfo.forEach(function(topic) {
-                            allShipmentPkgIds.push(topic.topic);
+                            arr.push(topic.topic.replace(/^(.*?)\/(.*?)\/(.*?)/, '$1/+/$3'));
                         });
+
+                        toUnique(arr);
+                        arr.sort();
+
+                        allShipmentPkgIds = arr;
 
                         listeners.forEach(function (listener) {
                             listener(null);
